@@ -32,7 +32,7 @@ st.title("🔐 Crypto Playground")
 # Pilih algoritma
 algo = st.sidebar.selectbox(
     "Pilih Algoritma",
-    ["Caesar Cipher", "Vigenere Cipher", "Stream/XOR Cipher", "DES"]
+    ["Caesar Cipher", "Vigenere Cipher", "Stream Cipher", "DES"]
 )
 
 # Pilih mode
@@ -58,18 +58,28 @@ elif algo == "Vigenere Cipher":
         st.success("Hasil:")
         st.code(result)
 
-elif algo == "Stream/XOR Cipher":
+elif algo == "Stream Cipher":
     text = st.text_area("Masukkan Teks")
-    seed = st.number_input("Seed (integer)", value=1)
-    taps = st.text_input("Taps (misal: 1,2,3)")
-    taps = [int(x) for x in taps.split(",")] if taps else []
+    seed_int = st.number_input("Seed (integer)", value=9)
+
+   
+    def int_to_bits(n, width=8):
+        return [(n >> i) & 1 for i in range(width-1, -1, -1)]
+
+    seed = int_to_bits(int(seed_int), width=8)
+
+   
+    taps = [0, len(seed)-1]
+
     if st.button("Proses"):
         if mode == "Enkripsi":
             result = stream_encrypt(text, seed, taps)
         else:
-            result = stream_decrypt(text, seed, taps)
+            cipher_bits = [int(b) for b in text.strip()]
+            result = stream_decrypt(cipher_bits, seed, taps)
         st.success("Hasil:")
         st.code(result)
+
 
 elif algo == "DES":
     text = st.text_area("Masukkan Plaintext (untuk Enkripsi) atau Cipher (base64 untuk Dekripsi)")
