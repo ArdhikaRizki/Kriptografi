@@ -38,9 +38,10 @@ def stream_encrypt(plaintext, seed, taps):
     bits = str_to_bits(plaintext)
     keystream = list(lfsr(seed, taps, len(bits)))
     cipher_bits = xor_bits(bits, keystream)
-    return cipher_bits
+    return ''.join(str(b) for b in cipher_bits)
 
-def stream_decrypt(cipher_bits, seed, taps):
+def stream_decrypt(cipher_str, seed, taps):
+    cipher_bits = [int(b) for b in cipher_str]   # turn "1011" back into [1,0,1,1]
     keystream = list(lfsr(seed, taps, len(cipher_bits)))
     plain_bits = xor_bits(cipher_bits, keystream)
     return bits_to_str(plain_bits)
